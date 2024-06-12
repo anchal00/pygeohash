@@ -1,7 +1,7 @@
 from typing import List
 
 
-class GeoHashCodec:
+class GeoHash:
     def __init__(self) -> None:
         self.__base32_lookup_table = {
             0: "0", 1: "1", 2: "2", 3: "3", 4: "4", 5: "5", 6: "6", 7: "7", 8: "8",
@@ -39,14 +39,10 @@ class GeoHashCodec:
         rng = [-90, 0, 90]  # [low, mid, high]
         return self.__encode_to_binary(latitude, bit_len, rng)
 
-    def encode(self, longitude: float, latitude: float, precision: int) -> str:
+    def get_geohash(self, longitude: float, latitude: float, precision: int) -> str:
         total_bits = precision * 5
         longitude_bin = self.__longitude_to_binary(longitude, total_bits // 2)
         latitude_bin = self.__latitude_to_binary(latitude, total_bits // 2)
 
         interleaved_binary_str = "".join("".join(entry) for entry in list(zip(longitude_bin, latitude_bin)))
         return self.__to_base_32(interleaved_binary_str)
-
-    def decode(self, geo_hash: str) -> tuple[float]:
-        ...
-

@@ -1,3 +1,3 @@
-from geo_encoder import GeoHashCodec
+from geo_hash import GeoHash
 
-print(GeoHashCodec().encode(31.327222, 76.894893, 12))
+print(GeoHash().get_geohash(31.327222, 76.894893, 12))
