@@ -1,3 +1,4 @@
+from math import ceil
 from typing import List
 
 
@@ -22,7 +23,7 @@ class GeoHash:
     def __encode_to_binary(self, number: float, bit_len: int, rng: List[float]) -> str:
         bin_string_list = []
         for _ in range(bit_len):
-            if number <= rng[1]:
+            if number < rng[1]:
                 bin_string_list.append("0")
                 rng[2] = rng[1] 
             else:
@@ -41,8 +42,8 @@ class GeoHash:
 
     def get_geohash(self, longitude: float, latitude: float, precision: int) -> str:
         total_bits = precision * 5
-        longitude_bin = self.__longitude_to_binary(longitude, total_bits // 2)
-        latitude_bin = self.__latitude_to_binary(latitude, total_bits // 2)
+        longitude_bin = self.__longitude_to_binary(longitude, ceil(total_bits / 2))
+        latitude_bin = self.__latitude_to_binary(latitude, ceil(total_bits / 2))
 
         interleaved_binary_str = "".join("".join(entry) for entry in list(zip(longitude_bin, latitude_bin)))
         return self.__to_base_32(interleaved_binary_str)
