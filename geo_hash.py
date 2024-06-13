@@ -20,11 +20,10 @@ class GeoHash:
         chunked_str = [
             binary_str[i:i+5] for i in range(0, len(binary_str), 5)
         ]
-
         return "".join(
             [
                 self.__base32_lookup_table[int(chunk, base=2)] for chunk in chunked_str 
-                                                               if len(chunk) == 5
+                                                               if len(chunk) == 5  # Drop chunk falling short of 5 chars
             ]
         )
 
@@ -48,23 +47,6 @@ class GeoHash:
         _range = [-90, 0, 90]  # [low, mid, high]
         return self.__encode_to_binary(latitude, bit_len, _range)
 
-    def get_geohash(self, longitude: float, latitude: float, precision: int) -> str:
-        # TODO: Validate lat, long
-        total_bits = precision * 5
-        longitude_bin: str = self.__longitude_to_binary(longitude, ceil(total_bits / 2))
-        latitude_bin: str = self.__latitude_to_binary(latitude, ceil(total_bits / 2))
-
-        interleaved_binary_str = "".join("".join(entry) for entry in list(zip(longitude_bin, latitude_bin)))
-        return self.__to_base_32(interleaved_binary_str)
-
-    def get_coordinates(self, geohash) -> tuple[float, float]:
-        decoded_base32: List[int] = [self.__inverted_base32_lookup_table[char] for char in geohash]
-        binary_str: str = "".join([bin(number).replace("0b", "").zfill(5) for number in decoded_base32])
-        longitude_bin: str = "".join([char for index, char in enumerate(binary_str) if index % 2 == 0])
-        latitude_bin: str = "".join([char for index, char in enumerate(binary_str) if index % 2 == 1])
-
-        return self.__binary_to_longitude(longitude_bin), self.__binary_to_latitude(latitude_bin)
-    
     def __binary_to_latitude(self, binary_stream: str) -> float:
         _range = [-90, 0, 90]
         return self.__decode_from_binary(binary_stream, _range)
@@ -81,3 +63,20 @@ class GeoHash:
                 _range[2] = _range[1]
             _range[1] = (_range[0] + _range[2]) / 2
         return _range[1]
+
+    def get_geohash(self, longitude: float, latitude: float, precision: int) -> str:
+        # TODO: Validate lat, long
+        total_bits = precision * 5
+        longitude_bin: str = self.__longitude_to_binary(longitude, ceil(total_bits / 2))
+        latitude_bin: str = self.__latitude_to_binary(latitude, ceil(total_bits / 2))
+
+        interleaved_binary_str = "".join("".join(entry) for entry in list(zip(longitude_bin, latitude_bin)))
+        return self.__to_base_32(interleaved_binary_str)
+
+    def get_coordinates(self, geohash) -> tuple[float, float]:
+        decoded_base32: List[int] = [self.__inverted_base32_lookup_table[char] for char in geohash]
+        binary_str: str = "".join([bin(number).replace("0b", "").zfill(5) for number in decoded_base32])
+        longitude_bin: str = "".join([char for index, char in enumerate(binary_str) if index % 2 == 0])
+        latitude_bin: str = "".join([char for index, char in enumerate(binary_str) if index % 2 == 1])
+
+        return self.__binary_to_longitude(longitude_bin), self.__binary_to_latitude(latitude_bin)

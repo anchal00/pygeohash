@@ -26,6 +26,28 @@ class GeoHashingTests(unittest.TestCase):
                 self.geo_hash_object.get_geohash(long, lat, PRECISION),
                 expected_geohash[:PRECISION]
             )
+    
+    def test_reverse_geohash(self):
+        coordinates_geohash_map = {
+            "utwm2y7c1nvz": (31.327222, 76.894893),
+            "7ww5eg6xwkdx": (-13.8940, -7.8031),
+            "tuuzzxr42nr0": (85.7689, 28.1213),
+            "g5nyrd5pkwz0": (-35.1739, 62.9859),
+            "tshww5gess49": (74.0968, 23.6638),
+            "ppxmbn5s9uum": (145.2002, -46.7680),
+        }
+        for geohash, expected_coordinates in coordinates_geohash_map.items():
+            actual_long, actual_lat = expected_coordinates
+            PRECISION = 12
+            reversed_long, reversed_lat = self.geo_hash_object.get_coordinates(geohash[:PRECISION])
+            self.assertAlmostEqual(reversed_long, actual_long, 5)
+            self.assertAlmostEqual(reversed_lat, actual_lat, 5)
+
+    def test_geohash_invalid_coordinates(self):
+        ...
+
+    def test_geohash_invalid_precision(self):
+        ...
 
 
 if __name__ == "__main__":

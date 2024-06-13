@@ -7,6 +7,6 @@ print(f"Geohash for longitude {long} and latitude {long} is `{hash}")
 
 decoded_long, decode_lat = GeoHash().get_coordinates(hash)
 print(
-    f"Decoded GeoHash `{hash}`,"
+    f"Decoded GeoHash `{hash}`, "
     f"longitude is {decoded_long} and latitude is {decode_lat}"
 )
