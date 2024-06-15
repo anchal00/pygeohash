@@ -1,5 +1,5 @@
 from math import ceil
-from typing import List
+from typing import List, Optional
 
 
 class GeoHash:
@@ -22,7 +22,7 @@ class GeoHash:
         ]
         return "".join(
             [
-                self.__base32_lookup_table[int(chunk, base=2)] for chunk in chunked_str 
+                self.__base32_lookup_table[int(chunk, base=2)] for chunk in chunked_str
                                                                if len(chunk) == 5  # Drop chunk falling short of 5 chars
             ]
         )
@@ -32,7 +32,7 @@ class GeoHash:
         for _ in range(bit_len):
             if number < _range[1]:
                 bin_string_list.append("0")
-                _range[2] = _range[1] 
+                _range[2] = _range[1]
             else:
                 bin_string_list.append("1")
                 _range[0] = _range[1]
@@ -64,8 +64,9 @@ class GeoHash:
             _range[1] = (_range[0] + _range[2]) / 2
         return _range[1]
 
-    def get_geohash(self, longitude: float, latitude: float, precision: int) -> str:
+    def get_geohash(self, longitude: float, latitude: float, precision: Optional[int]) -> str:
         # TODO: Validate lat, long
+        if not precision: precision = 12
         total_bits = precision * 5
         longitude_bin: str = self.__longitude_to_binary(longitude, ceil(total_bits / 2))
         latitude_bin: str = self.__latitude_to_binary(latitude, ceil(total_bits / 2))
@@ -74,9 +75,9 @@ class GeoHash:
         return self.__to_base_32(interleaved_binary_str)
 
     def get_coordinates(self, geohash) -> tuple[float, float]:
-        decoded_base32: List[int] = [self.__inverted_base32_lookup_table[char] for char in geohash]
-        binary_str: str = "".join([bin(number).replace("0b", "").zfill(5) for number in decoded_base32])
-        longitude_bin: str = "".join([char for index, char in enumerate(binary_str) if index % 2 == 0])
-        latitude_bin: str = "".join([char for index, char in enumerate(binary_str) if index % 2 == 1])
+        decoded_base32 = [self.__inverted_base32_lookup_table[char] for char in geohash]
+        binary_str = "".join([bin(number).replace("0b", "").zfill(5) for number in decoded_base32])
+        longitude_bin_str = "".join([char for index, char in enumerate(binary_str) if index % 2 == 0])
+        latitude_bin_str = "".join([char for index, char in enumerate(binary_str) if index % 2 == 1])
 
-        return self.__binary_to_longitude(longitude_bin), self.__binary_to_latitude(latitude_bin)
+        return self.__binary_to_longitude(longitude_bin_str), self.__binary_to_latitude(latitude_bin_str)

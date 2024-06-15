@@ -26,7 +26,7 @@ class GeoHashingTests(unittest.TestCase):
                 self.geo_hash_object.get_geohash(long, lat, PRECISION),
                 expected_geohash[:PRECISION]
             )
-    
+
     def test_reverse_geohash(self):
         coordinates_geohash_map = {
             "utwm2y7c1nvz": (31.327222, 76.894893),
