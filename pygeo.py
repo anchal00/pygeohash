@@ -1,11 +1,12 @@
 #!/usr/bin/env python3.9
 
 import argparse
+import sys
 
 from geo_hash import GeoHash
 
 arg_parser = argparse.ArgumentParser(
-    prog="PyGeoHash",
+    prog=sys.argv[0],
     description="A simple Python Based Geohashing codec 🌎",
     add_help=True,
     epilog="Made for fun 🙂"
